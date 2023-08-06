@@ -28,6 +28,7 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        UpdateLinks();
         InitializeComponent();
         DataContext = this;
 
@@ -70,14 +71,14 @@ public partial class MainWindow : Window
                 if (Settings.Default.Format.Contains("}"))
                 {
                     // Use the datetime formatter on every string between { and } and leave the rest alone.
-                    return _tokenizerRegex.Replace(Settings.Default.Format, (m) =>
+                    return "★" + _tokenizerRegex.Replace(Settings.Default.Format, (m) =>
                     {
                         return CurrentTimeInSelectedTimeZone.ToString(m.Value);
                     }).Replace("{", "").Replace("}", "");
                 }
 
                 // Use basic formatter if no special formatting tokens are present.
-                return CurrentTimeInSelectedTimeZone.ToString(Settings.Default.Format);
+                return "★" + CurrentTimeInSelectedTimeZone.ToString(Settings.Default.Format);
             }
         }
     }
@@ -97,6 +98,23 @@ public partial class MainWindow : Window
     /// </summary>
     [RelayCommand]
     public void SetFormat(string format) => Settings.Default.Format = format;
+    [RelayCommand]
+    public void OpenLink(string link)
+    {
+        if (File.Exists(link) || Directory.Exists(link))
+        {
+            try
+            {
+                Process.Start(link);
+            } catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        } else
+        {
+            MessageBox.Show("Not found " + link);
+        }
+    }
 
     /// <summary>
     /// Sets time zone ID in settings to parameter's time zone ID.
@@ -170,19 +188,16 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Checks for updates.
-    /// </summary>
-    [RelayCommand]
-    public void CheckForUpdates()
-    {
-        Process.Start("https://github.com/danielchalmers/DesktopClock/releases");
-    }
-
-    /// <summary>
     /// Exits the program.
     /// </summary>
     [RelayCommand]
     public void Exit() => Close();
+    [RelayCommand]
+    public void UpdateLinks()
+    {
+        DateTimeUtil.LoadLinks();
+        Console.WriteLine("hi");
+    }
 
     private void CreateOrDestroyTrayIcon(bool showTrayIcon, bool firstLaunch)
     {
@@ -229,7 +244,6 @@ public partial class MainWindow : Window
     {
         UpdateTimeString();
     }
-
     private void UpdateTimeString() => OnPropertyChanged(nameof(CurrentTimeOrCountdownString));
 
     private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -271,4 +285,5 @@ public partial class MainWindow : Window
 
         Settings.Default.Dispose();
     }
+
 }

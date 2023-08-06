@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 
 namespace DesktopClock;
@@ -35,6 +37,21 @@ public static class DateTimeUtil
     public static IReadOnlyDictionary<string, string> DateTimeFormatsAndExamples { get; } =
         DateTimeFormats.ToDictionary(f => f, DateTimeOffset.Now.ToString);
 
+    public static ObservableCollection<KeyValuePair<string, string>> Links { get; private set; } = new ObservableCollection<KeyValuePair<string, string>>();
+
+    public static void LoadLinks()
+    {
+        Links.Clear();
+        Links.Add(new KeyValuePair<string, string>(Properties.Settings.Default.LinkDirectory, Properties.Settings.Default.LinkDirectory));
+        if (Directory.Exists(Properties.Settings.Default.LinkDirectory))
+        {
+            Directory.EnumerateFiles(Properties.Settings.Default.LinkDirectory).ToList().ForEach(x =>
+            {
+                Links.Add(new KeyValuePair<string, string>(x, x));
+            });
+        }
+    }
+
     public static IReadOnlyCollection<TimeZoneInfo> TimeZones { get; } = TimeZoneInfo.GetSystemTimeZones();
 
     public static bool TryGetTimeZoneById(string timeZoneId, out TimeZoneInfo timeZoneInfo)
@@ -50,4 +67,5 @@ public static class DateTimeUtil
             return false;
         }
     }
+
 }

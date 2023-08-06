@@ -101,9 +101,20 @@
 
 			<MenuItem Command="{Binding OpenSettingsCommand}" Header="Advanced _settings..." />
 
-			<MenuItem Command="{Binding CheckForUpdatesCommand}" Header="Check for _updates..." />
+      <MenuItem x:Name="mnuLinks" Header="_Links" ItemsSource="{x:Static local:DateTimeUtil.Links}">
+        <MenuItem.Resources>
+          <Style TargetType="MenuItem">
+            <Setter Property="Command" Value="{Binding DataContext.OpenLinkCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
 
-			<MenuItem Command="{Binding ExitCommand}" Header="E_xit" />
+            <Setter Property="CommandParameter" Value="{Binding Value}" />
+
+            <Setter Property="DisplayMemberPath" Value="Key" />
+          </Style>
+        </MenuItem.Resources>
+      </MenuItem>
+
+      <MenuItem Command="{Binding UpdateLinksCommand}" Header="Update Links" />
+      <MenuItem Command="{Binding ExitCommand}" Header="E_xit" />
 		</ContextMenu>
 
 		<tb:TaskbarIcon x:Key="TrayIcon"

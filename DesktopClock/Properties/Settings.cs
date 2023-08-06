@@ -51,6 +51,7 @@ public sealed class Settings : INotifyPropertyChanged, IDisposable
     public DateTimeOffset CountdownTo { get; set; } = DateTimeOffset.MinValue;
     public string Format { get; set; } = "{dddd}, {MMM dd}, {HH:mm:ss}";
     public string TimeZone { get; set; } = string.Empty;
+    public string LinkDirectory { get; set; } = @"C:\";
     public string FontFamily { get; set; } = "Consolas";
     public Color TextColor { get; set; }
     public Color OuterColor { get; set; }
